@@ -1,0 +1,96 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+typedef struct tnode *treeptr;
+
+struct tnode {
+    int item;
+    treeptr left;
+    treeptr right;
+};
+
+treeptr createNode(int item);
+int countNodes(treeptr t);
+void addInTree(treeptr t, int x);
+void inDisplay(treeptr t);
+
+struct set {
+    treeptr root;
+};
+
+typedef struct set *Set;
+
+Set newSet();
+void destroySet(Set *s);
+void add(Set s, int x);
+void display(const char *name, Set s);
+int cardinality(Set s);
+void clear (Set s);
+
+int main() {
+    return 0;
+}
+
+treeptr createNode(int item) {
+    treeptr temp = (treeptr) malloc(sizeof(struct tnode));
+    temp->item = item;
+    temp->left = temp->right = NULL;
+    return temp;
+}
+
+int countNodes(treeptr t) {
+    if(t == NULL) 
+        return 0;
+    else
+        return 1 + countNodes(t->left) + countNodes(t->right);
+}
+
+void addInTree(treeptr t, int x) {
+    treeptr temp = createNode(x);
+    treeptr p = t;
+    treeptr prev = t;
+    while(p != NULL) {
+        prev = p;
+        if(x < p->item)
+            p = p->left;
+        else
+            p = p->right;
+    }
+    if(x < prev->item)
+        prev->left = temp;
+    else
+        prev->right = temp;
+}
+
+void inDisplay(treeptr t) {
+    if(t != NULL) {
+        inDisplay(t->left);
+        printf("%d ", t->item);
+        inDisplay(t->right);
+    }
+}
+
+Set newSet() {
+    Set s = (Set) malloc(sizeof(struct set));
+    s->root = NULL;
+}
+
+void add(Set s, int x) {
+    if(s->root == NULL)
+        s->root = createNode(x);
+    else
+        addInTree(s->root, x);
+}
+
+void display(const char *name, Set s) {
+    printf("%s = { ", name);
+    inDisplay(s->root);
+    printf("}\n");
+}
+
+int cardinality(Set s) {
+    return countNodes(s->root);
+}
+
+void destroySet(Set *s);
+void clear (Set s);
